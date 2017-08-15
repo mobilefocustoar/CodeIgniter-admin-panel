@@ -1,15 +1,20 @@
-	<div id="footer">
-		<hr>
-		<div class="inner">
-			<div class="container">
-				<p class="right"><a href="#">Back to top</a></p>
-				<p>
-				</p>
-			</div>
-		</div>
-	</div>
-	<script src="<?php echo base_url(); ?>assets/js/jquery-1.7.1.min.js"></script>
-	<script src="<?php echo base_url(); ?>assets/js/bootstrap.min.js"></script>
-	<script src="<?php echo base_url(); ?>assets/js/admin.min.js"></script>
+<!--	<div id="footer">-->
+<!--		<hr>-->
+<!--		<div class="inner">-->
+<!--			<div class="container">-->
+<!--				<p class="right"><a href="#">Back to top</a></p>-->
+<!--				<p>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--	</div>-->
+
+<script>
+    $('#confirm-delete').on('show.bs.modal', function(e) {
+        $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+
+        $('.debug-url').html('Delete URL: <strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+    });
+</script>
 </body>
 </html>

@@ -1,13 +1,13 @@
 <?php
-class Products_model extends CI_Model {
+class Products_model extends MY_Model {
  
     /**
     * Responsable for auto load the database
     * @return void
     */
-    public function __construct()
-    {
-        $this->load->database();
+    public function __construct() {
+    	parent::__construct();
+        $this->table = "products";
     }
 
     /**
@@ -15,15 +15,13 @@ class Products_model extends CI_Model {
     * @param int $product_id 
     * @return array
     */
-    public function get_product_by_id($id)
-    {
-		$this->db->select('*');
-		$this->db->from('products');
-		$this->db->where('id', $id);
-		$query = $this->db->get();
-		return $query->result_array(); 
-    }
+    public function get_product_by_id($id) {
+    	return $this->_get(array('id' => $id));
+	}
 
+	public function get_product_by_uid($uid) {
+        return $this->_get(array('uid' => $uid));
+    }
     /**
     * Fetch products data from the database
     * possibility to mix search, filter and order
@@ -35,44 +33,13 @@ class Products_model extends CI_Model {
     * @param int $limit_end
     * @return array
     */
-    public function get_products($manufacture_id=null, $search_string=null, $order=null, $order_type='Asc', $limit_start, $limit_end)
-    {
-	    
-		$this->db->select('products.id');
-		$this->db->select('products.description');
-		$this->db->select('products.stock');
-		$this->db->select('products.cost_price');
-		$this->db->select('products.sell_price');
-		$this->db->select('products.manufacture_id');
-		$this->db->select('manufacturers.name as manufacture_name');
-		$this->db->from('products');
-		if($manufacture_id != null && $manufacture_id != 0){
-			$this->db->where('manufacture_id', $manufacture_id);
-		}
-		if($search_string){
-			$this->db->like('description', $search_string);
-		}
-
-		$this->db->join('manufacturers', 'products.manufacture_id = manufacturers.id', 'left');
-
-		$this->db->group_by('products.id');
-
-		if($order){
-			$this->db->order_by($order, $order_type);
-		}else{
-		    $this->db->order_by('id', $order_type);
-		}
-
-
-		$this->db->limit($limit_start, $limit_end);
-		//$this->db->limit('4', '4');
-
-
-		$query = $this->db->get();
-		
-		return $query->result_array(); 	
+    public function get_products($search_string=null, $order=null, $order_type='Asc', $limit_start, $limit_end) {
+	    return $this->_get_list(null, $search_string, $order, $order_type, $limit_start, $limit_end);
     }
 
+    public function get_products_all() {
+        return $this->_get_list_all();
+    }
     /**
     * Count the number of rows
     * @param int $manufacture_id
@@ -80,22 +47,20 @@ class Products_model extends CI_Model {
     * @param int $order
     * @return int
     */
-    function count_products($manufacture_id=null, $search_string=null, $order=null)
-    {
-		$this->db->select('*');
-		$this->db->from('products');
-		if($manufacture_id != null && $manufacture_id != 0){
-			$this->db->where('manufacture_id', $manufacture_id);
-		}
-		if($search_string){
-			$this->db->like('description', $search_string);
-		}
-		if($order){
-			$this->db->order_by($order, 'Asc');
-		}else{
-		    $this->db->order_by('id', 'Asc');
-		}
-		$query = $this->db->get();
+    public function count_products($search_string=null) {
+        if ($this->table == null OR $this->table == '') {
+            return false;
+        }
+
+        $this->db->select('*');
+        $this->db->from($this->table);
+        if (!empty($condition)) {
+            $this->db->where($condition);
+        }
+        if (!empty($search_string)) {
+            $this->db->like('name', $search_string);
+        }
+        $query = $this->db->get();
 		return $query->num_rows();        
     }
 
@@ -104,39 +69,42 @@ class Products_model extends CI_Model {
     * @param array $data - associative array with data to store
     * @return boolean 
     */
-    function store_product($data)
-    {
-		$insert = $this->db->insert('products', $data);
-	    return $insert;
-	}
+    public function insert_product($data) {
+        $data['uid'] = $this->_get_uid();
+        $result =  $this->_insert($data);
+        if ($result == true) {
+            return $this->get_product_by_uid($data['uid']);
+        } else {
+            return false;
+        }
+    }
 
     /**
     * Update product
     * @param array $data - associative array with data to store
     * @return boolean
     */
-    function update_product($id, $data)
-    {
-		$this->db->where('id', $id);
-		$this->db->update('products', $data);
-		$report = array();
-		$report['error'] = $this->db->_error_number();
-		$report['message'] = $this->db->_error_message();
-		if($report !== 0){
-			return true;
-		}else{
-			return false;
-		}
+    public function update_product($condition, $data) {
+        return $this->_update($condition, $data);
 	}
+
+    public function update_product_by_uid($uid, $data) {
+        $data->uid = $uid;
+        $result = $this->_update(array('uid' => $uid), $data);
+        if ($result == true) {
+            return $this->get_product_by_uid($uid);
+        } else {
+            return false;
+        }
+    }
 
     /**
     * Delete product
     * @param int $id - product id
     * @return boolean
     */
-	function delete_product($id){
-		$this->db->where('id', $id);
-		$this->db->delete('products'); 
+	public function delete_product_by_uid($uid) {
+	    return $this->_delete(array('uid' => $uid));
 	}
  
 }

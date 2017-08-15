@@ -2,15 +2,15 @@
       
       <ul class="breadcrumb">
         <li>
-          <a href="<?php echo site_url("admin"); ?>">
+          <a href="<?php echo site_url(""); ?>">
             <?php echo ucfirst($this->uri->segment(1));?>
           </a> 
           <span class="divider">/</span>
         </li>
         <li>
-          <a href="<?php echo site_url("admin").'/'.$this->uri->segment(2); ?>">
+          <a href="<?php echo site_url("products").'/'.$this->uri->segment(2); ?>">
             <?php echo ucfirst($this->uri->segment(2));?>
-          </a> 
+          </a>
           <span class="divider">/</span>
         </li>
         <li class="active">
@@ -20,7 +20,7 @@
       
       <div class="page-header">
         <h2>
-          Adding <?php echo ucfirst($this->uri->segment(2));?>
+          Adding <?php echo ucfirst('product');?>
         </h2>
       </div>
  
@@ -32,7 +32,7 @@
           echo '<div class="alert alert-success">';
             echo '<a class="close" data-dismiss="alert">×</a>';
             echo '<strong>Well done!</strong> new product created with success.';
-          echo '</div>';       
+          echo '</div>';
         }else{
           echo '<div class="alert alert-error">';
             echo '<a class="close" data-dismiss="alert">×</a>';
@@ -44,58 +44,57 @@
       
       <?php
       //form data
-      $attributes = array('class' => 'form-horizontal', 'id' => '');
-      $options_manufacture = array('' => "Select");
-      foreach ($manufactures as $row)
-      {
-        $options_manufacture[$row['id']] = $row['name'];
-      }
-
+      $attributes = array('class' => 'form-horizontal', 'id' => '', 'method'=>'post', 'enctype' => 'multipart/form-data');
       //form validation
       echo validation_errors();
       
-      echo form_open('admin/products/add', $attributes);
+      echo form_open('products/add', $attributes);
       ?>
         <fieldset>
           <div class="control-group">
-            <label for="inputError" class="control-label">Description</label>
+            <label for="inputError" class="control-label">Name</label>
             <div class="controls">
-              <input type="text" id="" name="description" value="<?php echo set_value('description'); ?>" >
+              <input type="text" id="" name="name" value="<?php echo set_value('name'); ?>" >
               <!--<span class="help-inline">Woohoo!</span>-->
             </div>
           </div>
-          <div class="control-group">
-            <label for="inputError" class="control-label">Stock</label>
-            <div class="controls">
-              <input type="text" id="" name="stock" value="<?php echo set_value('stock'); ?>">
-              <!--<span class="help-inline">Cost Price</span>-->
+            <div class="control-group">
+                <label for="inputError" class="control-label">Thumbnail</label>
+                <div class="controls">
+                    <input type="file" id="" class="filestyle" name="thumbnail" value="<?php echo set_value('thumbnail'); ?>" data-icon="false">
+                    <!--<span class="help-inline">Cost Price</span>-->
+                </div>
             </div>
-          </div>          
           <div class="control-group">
-            <label for="inputError" class="control-label">Cost Price</label>
+            <label for="inputError" class="control-label">Video</label>
             <div class="controls">
-              <input type="text" id="" name="cost_price" value="<?php echo set_value('cost_price'); ?>">
+                <input type="file" id="" class="filestyle" name="data1" value="<?php echo set_value('data1'); ?>" data-icon="false">
               <!--<span class="help-inline">Cost Price</span>-->
             </div>
           </div>
           <div class="control-group">
-            <label for="inputError" class="control-label">Sell Price</label>
+            <label for="inputError" class="control-label">Map</label>
             <div class="controls">
-              <input type="text" name="sell_price" value="<?php echo set_value('sell_price'); ?>">
+                <input type="file" id="" class="filestyle" name="data2" value="<?php echo set_value('data2'); ?>" data-icon="false">
+              <!--<span class="help-inline">Cost Price</span>-->
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="inputError" class="control-label">Map Geometry</label>
+            <div class="controls">
+                <input type="file" id="" class="filestyle" name="data3" value="<?php echo set_value('data3'); ?>" data-icon="false">
+                <!--<span class="help-inline">Cost Price</span>-->
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="inputError" class="control-label">AR Geometry</label>
+            <div class="controls">
+<!--              <input type="text" name="object" value="--><?php //echo set_value('object'); ?><!--">-->
+                <input type="file" id="" class="filestyle" name="object" value="<?php echo set_value('object'); ?>" data-icon="false">
               <!--<span class="help-inline">OOps</span>-->
             </div>
           </div>
-          <?php
-          echo '<div class="control-group">';
-            echo '<label for="manufacture_id" class="control-label">Manufacture</label>';
-            echo '<div class="controls">';
-              //echo form_dropdown('manufacture_id', $options_manufacture, '', 'class="span2"');
-              
-              echo form_dropdown('manufacture_id', $options_manufacture, set_value('manufacture_id'), 'class="span2"');
 
-            echo '</div>';
-          echo '</div">';
-          ?>
           <div class="form-actions">
             <button class="btn btn-primary" type="submit">Save changes</button>
             <button class="btn" type="reset">Cancel</button>
